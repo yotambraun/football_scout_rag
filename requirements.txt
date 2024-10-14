@@ -1,0 +1,7 @@
+langchain-community
+aiohttp
+python-dotenv
+langchain_groq
+nest_asyncio
+html2text
+bs4
