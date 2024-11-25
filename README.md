@@ -1,4 +1,4 @@
-# Football Scout RAG ⚽️🤖
+# Football Scout RAG ⚽️
 
 Welcome to **Football Scout RAG**, an AI-powered football scouting agent designed to scrape data from Transfermarkt and provide advanced player statistics and comparisons.
 
