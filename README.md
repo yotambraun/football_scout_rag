@@ -1,94 +1,158 @@
-# Football Scout RAG ⚽️
+# Football Scout RAG
 
-Welcome to **Football Scout RAG**, an AI-powered football scouting agent designed to scrape data from Transfermarkt and provide advanced player statistics and comparisons.
-
-## Overview
-
-This project uses **LangChain**, **Groq**, and **BeautifulSoup** to fetch, analyze, and compare player data from Transfermarkt. With this agent, you can:
-
-- Search for player information from Transfermarkt
-- Get season-by-season breakdowns of goals, assists, and minutes
-- Compare multiple players on key performance metrics
-- Generate advanced statistics (e.g., goals per 90 minutes, assists per 90 minutes)
-- Answer follow-up questions about scouted players based on available data
+AI-powered football scouting agent using Retrieval-Augmented Generation (RAG) to analyze player statistics from Transfermarkt and provide intelligent insights.
 
 ## Features
 
-- **Player Search**: Find player details by name and fetch historical season data.
-- **Performance Analysis**: Get advanced stats like goals, assists, and minutes per game.
-- **Player Comparison**: Compare two or more players side by side.
-- **Follow-up Questions**: Ask follow-up questions about scouted players, and the agent will provide relevant answers.
+- **Player Scouting**: Fetch comprehensive player data including career statistics from Transfermarkt
+- **Intelligent Comparison**: Compare multiple players using AI-powered analysis
+- **Hidden Gems Finder**: Discover undervalued players based on statistical output vs market value
+- **Similarity Search**: Find players similar to a given profile using vector embeddings
+- **Age-Adjusted Comparisons**: Compare players at the same career stage
+- **Natural Language Queries**: Ask follow-up questions in natural language
+- **Beautiful CLI**: Rich terminal output with progress indicators and tables
+- **Web Dashboard**: Interactive Streamlit dashboard for visual exploration
 
 ## Installation
 
-To install the dependencies, run:
+### Prerequisites
+- Python 3.11+
+- [uv](https://github.com/astral-sh/uv) (recommended) or pip
+
+### Quick Start with uv (Recommended)
+
+```powershell
+# Clone the repository
+git clone https://github.com/yourusername/football-scout-rag
+cd football-scout-rag
+
+# Create virtual environment
+uv venv
+
+# Activate (Windows PowerShell)
+.venv\Scripts\activate
+
+# Install dependencies
+uv pip install -e ".[dev]"
+```
+
+### Alternative: pip install
 
 ```bash
-pip install -r requirements.txt
+pip install -e ".[dev]"
 ```
+
+### Configuration
+
+1. Copy the example environment file:
+```bash
+cp .env.example .env
+```
+
+2. Add your Groq API key to `.env`:
+```
+GROQ_API_KEY=your_groq_api_key_here
+```
+
+Get a free API key at [https://console.groq.com](https://console.groq.com)
 
 ## Usage
-**Note**: Make sure to set up your .env file with the **GROQ_API_KEY**:
-GROQ_API_KEY=your_api_key_here
 
-1. **Scouting Players:**
-Run the main script and enter player names:
+### CLI Commands
 
 ```bash
-python main.py
+# Scout a player
+football-scout scout "Oscar Gloukh"
+
+# Scout multiple players
+football-scout scout "Messi" "Ronaldo" "Haaland"
+
+# Compare players (must be scouted first)
+football-scout compare "Messi" "Ronaldo"
+
+# Find hidden gems (undervalued players)
+football-scout gems --max-value 10000000
+
+# Compare players at the same age
+football-scout compare-age "Gloukh" "Mbappe" --age 20
+
+# Ask a follow-up question
+football-scout ask "Who has the better goal-to-game ratio?"
+
+# Interactive mode
+football-scout interactive
+
+# Output formats
+football-scout scout "Player Name" --format table
+football-scout scout "Player Name" --format json
 ```
 
-Example:
-```bash
-Enter player names to scout (comma-separated): Oscar Gloukh, Dor Turgeman
-```
-The agent will fetch their data and generate a report:
-
-```yaml
-Player Report for Oscar Gloukh:
-- Goals per game: 1.24
-- Assists per game: 0.28
-- Minutes per game: 64.08
-```
-
-2. **Comparing Players:**
-After scouting at least two players, you can compare them:
-
-```bash
-compare
-```
-
-Example output:
-```yaml
-Player Comparison:
-- Goals per game:
-  - Oscar Gloukh: 1.24
-  - Dor Turgeman: 0.48
-```
-
-3. **Advanced Stats:**
-You can ask for more detailed statistics:
+### Web Dashboard
 
 ```bash
-? give advanced statistics about those players?
+streamlit run src/football_scout/dashboard/app.py
 ```
 
-Example output:
-```diff
-- Oscar Gloukh: 2.03 goals per 90 minutes
-- Dor Turgeman: 0.82 goals per 90 minutes
+Then open [http://localhost:8501](http://localhost:8501) in your browser.
+
+## Project Structure
+
+```
+football_scout_rag/
+├── src/football_scout/
+│   ├── cli/              # Typer CLI application
+│   ├── core/             # Core business logic (agent, scraper, analyzer)
+│   ├── models/           # Pydantic data models
+│   ├── llm/              # LLM client and prompts
+│   ├── rag/              # ChromaDB vector store
+│   ├── dashboard/        # Streamlit web app
+│   └── config/           # Settings management
+├── tests/                # pytest tests
+├── data/                 # Data storage (gitignored)
+├── pyproject.toml        # Modern Python packaging
+└── README.md
 ```
 
-4. **Follow-up Questions:**
-You can ask a follow-up question about the scouted players:
+## Key Features Explained
+
+### Hidden Gems Finder
+Find undervalued players by comparing their statistical output to market value:
+```bash
+football-scout gems --max-value 5000000 --min-apps 10
+```
+
+### Similarity Search
+Find players with similar profiles using vector embeddings:
+```bash
+football-scout similar "Oscar Gloukh" --top 5
+```
+
+### Age-Adjusted Comparisons
+Compare players at the same age to see development trajectories:
+```bash
+football-scout compare-age "Gloukh" "Mbappe" --age 20
+```
+
+## Running Tests
 
 ```bash
-? What are the key strengths of these players based on their stats?
+pytest tests/ -v
 ```
 
-Example output:
-```yaml
-Based on the stats:
-- Oscar Gloukh has a high goal involvement rate with 2.03 goals per 90 minutes.
-- Dor Turgeman is an effective playmaker with balanced goals and assists.
-```
+## Tech Stack
+
+- **LLM**: Groq (mixtral-8x7b-32768)
+- **Web Scraping**: aiohttp + BeautifulSoup
+- **Vector Store**: ChromaDB
+- **CLI**: Typer + Rich
+- **Web UI**: Streamlit
+- **Data Validation**: Pydantic
+- **Testing**: pytest
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
